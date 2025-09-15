@@ -40,8 +40,8 @@ export default function VehicleHome() {
     <div className="bg-gray-50">
       <div className="text-center">
         <p className="text-3xl font-semibold pb-5 pt-20">Our Vehicle Categories</p>
-        <p className="text-gray-400">Choose from our diverse fleet of well-maintained vehicles to suit every need and</p>
-        <p className="text-gray-300">budget.</p>
+        <p className="text-gray-500">Choose from our diverse fleet of well-maintained vehicles to suit every need and</p>
+        <p className="text-gray-500">budget.</p>
       </div>
       <div className=" mt-7 pb-20 p-6 gap-6 grid grid-cols-2 xl:grid-cols-4">
         {VehicleCards.map((card, idx) => (
