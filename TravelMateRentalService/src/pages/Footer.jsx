@@ -1,6 +1,14 @@
 import { Phone, Mail, Car } from "lucide-react";
+import { useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 export default function Footer() {
+  const { pathname } = useLocation();
+
+  const ScroolTop = () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <footer className="w-full">
       <div className="bg-gradient-to-r from-teal-700 to-teal-500 text-center py-14 px-6">
@@ -48,20 +56,60 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold mb-3">Quick Links</h4>
             <ul className="space-y-2 text-sm">
-              <li><a className="hover:text-orange-600 font-bold" href="#">Home</a></li>
-              <li><a className="hover:text-orange-600 font-bold" href="#">About</a></li>
-              <li><a className="hover:text-orange-600 font-bold" href="#">Vehicle Models</a></li>
-              <li><a className="hover:text-orange-600 font-bold" href="#">Contact</a></li>
+              <li>
+                <Link
+                  className="hover:text-orange-600 font-bold"
+                  to="/"
+                  onClick={ScroolTop}
+                >
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link
+                  className="hover:text-orange-600 font-bold"
+                  to="/about"
+                  onClick={ScroolTop}
+                >
+                  About
+                </Link>
+              </li>
+              <li>
+                <Link className="hover:text-orange-600 font-bold" to="/">
+                  Vehicle Models
+                </Link>
+              </li>
+              <li>
+                <Link className="hover:text-orange-600 font-bold" href="#">
+                  Contact
+                </Link>
+              </li>
             </ul>
           </div>
 
           <div>
             <h4 className="font-semibold mb-3">Services</h4>
             <ul className="space-y-2 text-sm">
-              <li><a className="hover:text-orange-600 font-bold" href="#">Car Rental</a></li>
-              <li><a className="hover:text-orange-600 font-bold" href="#">Bike Rental</a></li>
-              <li><a className="hover:text-orange-600 font-bold" href="#">Bicycle Rental</a></li>
-              <li><a className="hover:text-orange-600 font-bold" href="#">Long-term Rental</a></li>
+              <li>
+                <a className="hover:text-orange-600 font-bold" href="#">
+                  Car Rental
+                </a>
+              </li>
+              <li>
+                <a className="hover:text-orange-600 font-bold" href="#">
+                  Bike Rental
+                </a>
+              </li>
+              <li>
+                <a className="hover:text-orange-600 font-bold" href="#">
+                  Bicycle Rental
+                </a>
+              </li>
+              <li>
+                <a className="hover:text-orange-600 font-bold" href="#">
+                  Long-term Rental
+                </a>
+              </li>
             </ul>
           </div>
 

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from 'react-router-dom';
 
 function Topbar(){
     const [isOpen, setIsOpen] = useState(false);
@@ -7,21 +8,21 @@ function Topbar(){
        <header className="mt-0 bg-white shadow-md sticky top-0 z-50">
         <div className="flex justify-between items-center h-17 px-1">
         <div className="h-16 flex items-center">
-            <div className=""> <a href="#">
+            <div className=""> <Link to='/'>
                 <img src="/car.jpg" className=" ml-5 bg-white rounded h-15 flex " alt="car image"/>
-            </a>
+            </Link>
             </div>
             <div className="cursor-pointer">
-               <p className="pl-1 font-semibold text-xl"><a href="#">TravelMate</a></p>
-               <p className="pl-1 font-semibold text-sm text-orange-600 "><a href="#">Rental service</a></p>
+               <p className="pl-1 font-semibold text-xl"><Link to='/'>TravelMate</Link></p>
+               <p className="pl-1 font-semibold text-sm text-orange-600 "><Link to='/'>Rental service</Link></p>
             </div>
         </div>
 
         <nav className="hidden md:flex  lg:space-x-10 md:space-x-7 font-semibold">
-          <a href="#" className="hover:text-orange-600">Home</a>
-          <a href="#" className="hover:text-orange-600">About</a>
-          <a href="#" className="hover:text-orange-600">Vehicle Models</a>
-          <a href="#" className="hover:text-orange-600">Contact</a>
+          <Link to='/' className="hover:text-orange-600">Home</Link>
+          <Link to='/about' className="hover:text-orange-600">About</Link>
+          <Link to='/model' className="hover:text-orange-600">Vehicle Models</Link>
+          <Link to='/contact' className="hover:text-orange-600">Contact</Link>
         </nav>
 
         <div className="md:flex hidden h-14 items-center space-x-4  ">
@@ -47,10 +48,10 @@ function Topbar(){
       {isOpen && (
         <div className="md:hidden px-4 pb-4 space-y-4">
           <nav className="flex flex-col space-y-2 font-semibold">
-            <a href="#" className="hover:text-orange-600">Home</a>
-            <a href="#" className="hover:text-orange-600">About</a>
-            <a href="#" className="hover:text-orange-600">Vehicle Models</a>
-            <a href="#" className="hover:text-orange-600">Contact</a>
+            <Link to='/' className="hover:text-orange-600">Home</Link>
+            <Link to='/about' className="hover:text-orange-600">About</Link>
+            <Link to='/model' className="hover:text-orange-600">Vehicle Models</Link>
+            <Link to='/contact' className="hover:text-orange-600">Contact</Link>
           </nav>
           <div className="flex flex-col space-y-2">
             <a href="#" className="hover:text-orange-600 font-semibold">Signin</a>
