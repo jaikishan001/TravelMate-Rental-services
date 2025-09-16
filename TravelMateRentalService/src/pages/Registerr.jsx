@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 
-export default function Register() {
+export default function Registerr() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
