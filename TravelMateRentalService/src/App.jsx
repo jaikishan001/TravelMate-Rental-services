@@ -4,6 +4,7 @@ import About from "./pages/About";
 import { Route, BrowserRouter, Routes } from "react-router-dom";
 import ScrollToTop from "../ScrollToTop";
 import Contact from "./pages/Contact";
+import Register from "./pages/Register";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact/>} />
+          <Route path="/register" element={<Register/>} />
         </Routes>
       </BrowserRouter>
     </>
