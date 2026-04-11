@@ -74,6 +74,7 @@ export function Book() {
 
     const booking = {
       id: "b" + Date.now(),
+      userToken: localStorage.getItem("token"),
       vehicleId: vehicle.id,
       vehicleName: vehicle.name,
       vehiclePrice: vehicle.price,

@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Registerr() {
   const [formData, setFormData] = useState({
@@ -14,6 +14,7 @@ export default function Registerr() {
 
   const [error, setError] = useState("");
   const [errorField, setErrorField] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -65,10 +66,32 @@ export default function Registerr() {
     return true;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      console.log("Form submitted ✅", formData);
+      try {
+        const response = await fetch("http://localhost:8081/api/users/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            password: formData.password,
+            phoneNo: formData.number,
+          }),
+        });
+        const data = await response.text();
+        if (response.ok) {
+          console.log("Registered successfully", data);
+          alert("Registered successfully! Please sign in.");
+          navigate("/signin");
+        } else {
+          setError(data || "Registration failed");
+          setErrorField("email");
+        }
+      } catch (err) {
+        setError("Network error. Please try again later.");
+      }
     }
   };
 
@@ -111,8 +134,6 @@ export default function Registerr() {
 
         <form
           onSubmit={handleSubmit}
-          action="/do-register"
-          method="post"
           className="space-y-5"
         >
           <div>

@@ -22,6 +22,10 @@ public class JwtUtil {
         return extractClaim(token, Claims::getSubject);
     }
 
+    public String extractRole(String token) {
+        return extractClaim(token, claims -> claims.get("role", String.class));
+    }
+
     // Extract expiration
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
@@ -46,13 +50,19 @@ public class JwtUtil {
     }
 
     // Generate token
-    public String generateToken(String username) {
+    public String generateToken(String username, String role) {
         return Jwts.builder()
                 .setSubject(username)
+                .claim("role", role)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+    }
+    
+    // Kept for backward compatibility
+    public String generateToken(String username) {
+        return generateToken(username, "USER");
     }
 
     // Validate token

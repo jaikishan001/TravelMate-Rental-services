@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TravelMate Complete Code Registry</title>
+  <link rel="stylesheet" href="report_style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Fira+Code&display=swap" rel="stylesheet">
+  <style>
+    .code-window { margin-bottom: 40px; page-break-after: always; }
+    body { padding-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="report-header">
+      <h1>TravelMate Rental Services</h1>
+      <p>System Architecture & Component Registry (10 Key Modules)</p>
+    </header>
+
+    <!-- 1. AIVerification.jsx -->
+    <section class="code-window" id="snippet-1">
+      <div class="window-header">
+        <div class="dots"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+        <div class="file-name">Frontend / src / pages / AIVerification.jsx</div>
+      </div>
+      <div class="code-content"><pre><code class="language-jsx">import React, { useRef, useState, useEffect } from 'react';
+import * as cocoSsd from '@tensorflow-models/coco-ssd';
+import * as tf from '@tensorflow/tfjs';
+
+export default function AIVerification() {
+  const [model, setModel] = useState(null);
+  useEffect(() => {
+    async function loadResources() {
+      await tf.ready();
+      const loadedModel = await cocoSsd.load({ base: 'lite_mobilenet_v2' });
+      setModel(loadedModel);
+    }
+    loadResources();
+  }, []);
+  // Real-time vehicle detection logic...
+}</code></pre></div>
+    </section>
+
+    <!-- 2. User.java -->
+    <section class="code-window" id="snippet-2">
+      <div class="window-header">
+        <div class="dots"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+        <div class="file-name">Backend / com.TravelMate.entities / User.java</div>
+      </div>
+      <div class="code-content"><pre><code class="language-java">@Entity(name="user")
+@Table(name="users")
+@Getter @Setter @AllArgsConstructor @NoArgsConstructor @Builder
+public class User {
+      @Id private String userId;
+      @Column(name="User_name") private String username;
+      @Column(unique = true, nullable = false) private String email;
+      private String password;
+      private boolean isActive=false;
+      @Enumerated(EnumType.STRING) private loginProvider loginBy=loginProvider.SELF;
+      @ElementCollection(fetch = FetchType.EAGER)
+      @CollectionTable(name = "user_roles",joinColumns = @JoinColumn(name = "userId"))
+      Set<Role> roles=new HashSet<>();
+}</code></pre></div>
+    </section>
+
+    <!-- 3. App.jsx -->
+    <section class="code-window" id="snippet-3">
+      <div class="window-header">
+        <div class="dots"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+        <div class="file-name">Frontend / src / App.jsx</div>
+      </div>
+      <div class="code-content"><pre><code class="language-jsx">function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/signin" element={<Signin />} />
+        <Route path="/vehicle" element={<VehiclePage />} />
+        <Route path="/verify" element={<AIVerification />} />
+        <Route path="/checkout" element={<Checkout />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}</code></pre></div>
+    </section>
+
+    <!-- 4. TravelMateApplication.java -->
+    <section class="code-window" id="snippet-4">
+      <div class="window-header">
+        <div class="dots"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+        <div class="file-name">Backend / com.TravelMate / TravelMateApplication.java</div>
+      </div>
+      <div class="code-content"><pre><code class="language-java">package com.TravelMate;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class TravelMateApplication {
+	public static void main(String[] args) {
+		SpringApplication.run(TravelMateApplication.class, args);
+	}
+}</code></pre></div>
+    </section>
+
+    <!-- 5. Signin.jsx -->
+    <section class="code-window" id="snippet-5">
+      <div class="window-header">
+        <div class="dots"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+        <div class="file-name">Frontend / src / pages / Signin.jsx</div>
+      </div>
+      <div class="code-content"><pre><code class="language-jsx">const handleSubmit = async (e) => {
+    try {
+      const response = await fetch("http://localhost:8081/api/users/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response.text();
+      if (response.ok) {
+        localStorage.setItem("token", data);
+        navigate("/");
+      }
+    } catch (err) { setError("Network error."); }
+};</code></pre></div>
+    </section>
+
+    <!-- 6. pageController.java -->
+    <section class="code-window" id="snippet-6">
+      <div class="window-header">
+        <div class="dots"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+        <div class="file-name">Backend / com.TravelMate.controllers / pageController.java</div>
+      </div>
+      <div class="code-content"><pre><code class="language-java">@RestController
+@CrossOrigin(origins = "http://localhost:5173")
+@RequestMapping("/api/users")
+public class pageController {
+  @Autowired private UserRepository userRepository;
+  @Autowired private JwtUtil jwtUtil;
+
+  @PostMapping("/login")
+  public ResponseEntity<?> loginUser(@RequestBody UserDetails user) {
+    Optional<UserDetails> existingUser = userRepository.findByEmail(user.getEmail());
+    if (existingUser.isPresent() && encoder.matches(user.getPassword(), existingUser.get().getPassword())) {
+      String token = jwtUtil.generateToken(user.getEmail());
+      return ResponseEntity.ok().body("{\"token\": \"" + token + "\"}");
+    }
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+  }
+}</code></pre></div>
+    </section>
+
+    <!-- 7. Checkout.jsx -->
+    <section class="code-window" id="snippet-7">
+      <div class="window-header">
+        <div class="dots"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+        <div class="file-name">Frontend / src / pages / Checkout.jsx</div>
+      </div>
+      <div class="code-content"><pre><code class="language-jsx">const Checkout = () => (
+  <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="bg-white rounded-2xl shadow-lg p-8 max-w-md w-full">
+      <h1 className="text-2xl font-semibold text-gray-800 mb-4">Checkout</h1>
+      <p className="text-gray-600 mb-6">Payment and Final Review.</p>
+    </div>
+  </div>
+);</code></pre></div>
+    </section>
+
+    <!-- 8. BookingHistory.jsx -->
+    <section class="code-window" id="snippet-8">
+      <div class="window-header">
+        <div class="dots"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+        <div class="file-name">Frontend / src / pages / BookingHistory.jsx</div>
+      </div>
+      <div class="code-content"><pre><code class="language-jsx">const BookingHistory = () => {
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const allBookings = JSON.parse(localStorage.getItem("vm_bookings") || "[]");
+    const userBookings = allBookings.filter(b => b.userToken === token);
+    setBookings(userBookings);
+  }, []);
+  // Rendering historical rental data...
+}</code></pre></div>
+    </section>
+
+    <!-- 9. Role.java -->
+    <section class="code-window" id="snippet-9">
+      <div class="window-header">
+        <div class="dots"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+        <div class="file-name">Backend / com.TravelMate.entities / Role.java</div>
+      </div>
+      <div class="code-content"><pre><code class="language-java">package com.TravelMate.entities;
+
+public enum Role {
+      uploader,
+      seeker
+}</code></pre></div>
+    </section>
+
+    <!-- 10. pom.xml -->
+    <section class="code-window" id="snippet-10">
+      <div class="window-header">
+        <div class="dots"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+        <div class="file-name">Backend / pom.xml</div>
+      </div>
+      <div class="code-content"><pre><code class="language-xml">&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-data-jpa&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;io.jsonwebtoken&lt;/groupId&gt;
+        &lt;artifactId&gt;jjwt-api&lt;/artifactId&gt;
+        &lt;version&gt;0.11.5&lt;/version&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre></div>
+    </section>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-jsx.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+</body>
+</html>

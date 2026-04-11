@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Loader from "../components/common/Loader";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export function Signin() {
   const [email, setEmail] = useState("");
@@ -8,6 +8,7 @@ export function Signin() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const validate = () => {
     if (!email) return "Please enter an email.";
@@ -19,7 +20,7 @@ export function Signin() {
     return "";
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const v = validate();
     if (v) {
@@ -29,14 +30,49 @@ export function Signin() {
     setError("");
     setLoading(true);
 
-    // FRONTEND ONLY: simulate a request
-    setTimeout(() => {
+    try {
+      const response = await fetch("http://localhost:8081/api/users/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response.text();
       setLoading(false);
-      // in a real app you would call your API here
-      // e.g. fetch('/api/signin', { method: 'POST', body: JSON.stringify({ email, password }) })
-      console.log("Signed in (simulated)", { email, password });
-      alert("Signed in (simulated)\nEmail: " + email);
-    }, 800);
+
+      if (response.ok) {
+        console.log("Signed in successfully", data);
+        alert("Signed in successfully!");
+        
+        // The backend returns {"token": "...", "role": "..."}
+        try {
+          const parsedData = JSON.parse(data);
+          if (parsedData.token) {
+            localStorage.setItem("token", parsedData.token);
+          }
+          if (parsedData.role) {
+            localStorage.setItem("role", parsedData.role);
+            
+            // Redirect based on role
+            if (parsedData.role === "ADMIN") {
+               navigate("/admin/dashboard");
+            } else if (parsedData.role === "MODERATOR") {
+               navigate("/moderator/dashboard");
+            } else {
+               navigate("/user/dashboard");
+            }
+          } else {
+            navigate("/user/dashboard"); // Default route
+          }
+        } catch(e) {
+            localStorage.setItem("token", data);
+            navigate("/user/dashboard");
+        }
+        setError(data || "Invalid credentials");
+      }
+    } catch (err) {
+      setLoading(false);
+      setError("Network error. Please try again later.");
+    }
   };
 
   return (
