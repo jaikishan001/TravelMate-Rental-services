@@ -1,5 +1,6 @@
 package com.TravelMate.controllers;
 
+import com.TravelMate.entities.Role;
 import com.TravelMate.entities.UserDetails;
 import com.TravelMate.repository.UserRepository;
 import com.TravelMate.security.JwtUtil;
@@ -34,6 +35,7 @@ public class pageController {
       return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already registered");
     }
     user.setPassword(encoder.encode(user.getPassword()));
+    user.setRole(Role.USER); // Default role
     UserDetails saved = userRepository.save(user);
     return ResponseEntity.status(HttpStatus.CREATED).body(saved);
   }
@@ -42,10 +44,28 @@ public class pageController {
   public ResponseEntity<?> loginUser(@RequestBody UserDetails user) {
     Optional<UserDetails> existingUser = userRepository.findByEmail(user.getEmail());
     if (existingUser.isPresent() && encoder.matches(user.getPassword(), existingUser.get().getPassword())) {
-      String token = jwtUtil.generateToken(user.getEmail());
-      return ResponseEntity.ok().body("{\"token\": \"" + token + "\"}");
+      UserDetails foundUser = existingUser.get();
+      String token = jwtUtil.generateToken(foundUser.getEmail(), foundUser.getRole() != null ? foundUser.getRole().name() : "USER");
+      
+      String role = foundUser.getRole() != null ? foundUser.getRole().name() : "USER";
+      return ResponseEntity.ok().body("{\"token\": \"" + token + "\", \"role\": \"" + role + "\"}");
     }
-    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("{\"error\": \"Invalid credentials\"}");
+  }
+
+  // Temporary endpoint to create an admin
+  @PostMapping("/setup-admin")
+  public ResponseEntity<?> setupAdmin(@RequestBody UserDetails user) {
+    if (user.getEmail() == null || user.getPassword() == null) {
+      return ResponseEntity.badRequest().body("Email and password are required");
+    }
+    if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+      return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already registered");
+    }
+    user.setPassword(encoder.encode(user.getPassword()));
+    user.setRole(Role.ADMIN); // Admin role
+    UserDetails saved = userRepository.save(user);
+    return ResponseEntity.status(HttpStatus.CREATED).body(saved);
   }
 }
 

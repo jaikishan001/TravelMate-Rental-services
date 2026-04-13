@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import VehicleCard from "../components/VehicleCard"; 
 import Footer from "./Footer";
 import Topbar from "../components/Topbar";
@@ -71,23 +71,53 @@ const CATEGORIES = [
 
 export function VehiclePage() {
   const [selectedType, setSelectedType] = useState("all");
+  const [dbVehicles, setDbVehicles] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const filters = ["all", ...CATEGORIES.map((c) => c.type)];
+  useEffect(() => {
+    fetch("http://localhost:8081/api/vehicles")
+      .then(res => res.json())
+      .then(data => {
+        setDbVehicles(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Failed to fetch vehicles:", err);
+        setLoading(false);
+      });
+  }, []);
 
-  const activeCategory = selectedType === "all" ? null : CATEGORIES.find((c) => c.type === selectedType);
+  // Compute dynamic categories based on db data matched against our default schema
+  const categoriesList = CATEGORIES.map(cat => ({
+    ...cat,
+    models: dbVehicles.length > 0 
+      ? dbVehicles.filter(v => v.category === cat.type).map(v => ({
+          id: v.id,
+          name: v.name,
+          image: v.imageUrl,
+          price: `₹${v.pricePerDay}/day`,
+          features: v.features ? v.features.split(',').map(f => f.trim()) : [],
+        }))
+      // Fallback to hardcoded models if db is empty
+      : cat.models
+  }));
+
+  const filters = ["all", ...categoriesList.map((c) => c.type)];
+  const activeCategory = selectedType === "all" ? null : categoriesList.find((c) => c.type === selectedType);
 
   return (
     <div className="bg-gray-50 min-h-screen">
       <Topbar/>
       <div className="text-center">
         <h1 className="text-3xl font-semibold pt-20 pb-3">Our Vehicle Categories</h1>
+        {loading && <p className="text-gray-500">Loading vehicles from database...</p>}
       </div>
 
       <div className="flex flex-wrap justify-center gap-3 mt-8 mb-6">
         {filters.map((filter) => {
           const isActive = selectedType === filter;
           const label =
-            filter === "all" ? "All" : CATEGORIES.find((c) => c.type === filter)?.title || filter;
+            filter === "all" ? "All" : categoriesList.find((c) => c.type === filter)?.title || filter;
           return (
             <button
               key={filter}
@@ -107,7 +137,7 @@ export function VehiclePage() {
       <div className="max-w-7xl mx-auto p-6">
         {selectedType === "all" && (
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-            {CATEGORIES.map((cat) => (
+            {categoriesList.map((cat) => (
               <div
                 key={cat.type}
                 className="bg-white rounded-lg overflow-hidden shadow hover:shadow-md transition"

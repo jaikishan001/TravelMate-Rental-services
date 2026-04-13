@@ -10,6 +10,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
 @Getter
 @Setter
@@ -26,4 +28,7 @@ public class UserDetails {
   private String password;
   private String phoneNo;
   private String email;
+
+  @Enumerated(EnumType.STRING)
+  private Role role;
 }
